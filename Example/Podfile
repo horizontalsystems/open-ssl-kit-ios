@@ -1,0 +1,6 @@
+use_frameworks!
+target 'OpenSslKit_Tests' do
+  pod 'OpenSslKit', :path => '../'
+  
+  
+end
