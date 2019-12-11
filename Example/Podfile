@@ -1,6 +1,6 @@
-use_frameworks!
+platform :ios, '11'
+use_modular_headers!
+
 target 'OpenSslKit_Tests' do
-  pod 'OpenSslKit', :path => '../'
-  
-  
+  pod 'OpenSslKit.swift', :path => '../'
 end
