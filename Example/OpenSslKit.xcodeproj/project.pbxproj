@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1D1FD784BCFC52AD0CF0E69C /* libPods-OpenSslKit_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EA34BAE32B66A8B05A00FFA8 /* libPods-OpenSslKit_Tests.a */; };
+		58AAA01A2603957B5CA1C7A7 /* ScryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58AAAA81A76447942BD675D8 /* ScryptTests.swift */; };
+		58AAA273F1F4152338CCCE22 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58AAA742CF08E002DF8F6986 /* Extensions.swift */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 /* End PBXBuildFile section */
 
@@ -15,6 +17,8 @@
 		3C3554D0EFDF22E3ED9AB9B3 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		42401063CAB053FD35A8D4FF /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		42F9C44C26647906298B0DFF /* Pods-OpenSslKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenSslKit_Tests.release.xcconfig"; path = "Target Support Files/Pods-OpenSslKit_Tests/Pods-OpenSslKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		58AAA742CF08E002DF8F6986 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		58AAAA81A76447942BD675D8 /* ScryptTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScryptTests.swift; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* OpenSslKit_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenSslKit_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
@@ -68,6 +72,8 @@
 			children = (
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				58AAAA81A76447942BD675D8 /* ScryptTests.swift */,
+				58AAA742CF08E002DF8F6986 /* Extensions.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -195,6 +201,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+				58AAA01A2603957B5CA1C7A7 /* ScryptTests.swift in Sources */,
+				58AAA273F1F4152338CCCE22 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

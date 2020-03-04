@@ -68,6 +68,13 @@
     return result;
 }
 
++ (NSData *)hmacpbfdf2:(NSData *)pass salt:(NSData *)salt length:(NSUInteger)length iterations:(NSInteger)iterations {
+
+    NSMutableData *result = [NSMutableData dataWithLength:length];
+    PKCS5_PBKDF2_HMAC(pass.bytes, (int)pass.length, salt.bytes, (int)salt.length, (int)iterations, EVP_sha256(), (int)length, result.mutableBytes);
+    return result;
+}
+
 @end
 
 @implementation _ECKey
