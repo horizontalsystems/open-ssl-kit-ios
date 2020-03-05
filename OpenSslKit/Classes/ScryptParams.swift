@@ -49,8 +49,8 @@ public struct ScryptParams {
     public init() {
         let length = 32
         var data = Data(repeating: 0, count: length)
-        let result = data.withUnsafeMutableBytes { p in
-            SecRandomCopyBytes(kSecRandomDefault, length, p)
+        let result = data.withUnsafeMutableBytes {
+            SecRandomCopyBytes(kSecRandomDefault, length, $0.baseAddress!)
         }
         precondition(result == errSecSuccess, "Failed to generate random number")
         salt = data
