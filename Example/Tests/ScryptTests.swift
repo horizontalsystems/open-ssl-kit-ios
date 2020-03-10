@@ -19,124 +19,30 @@ class ScryptTests: XCTestCase {
             "0200000050bfd4e4a307a8cb6ef4aef69abc5c0f2d579648bd80d7733e1ccc3fbc90ed664a7f74006cb11bde87785f229ecd366c2d4e44432832580e0608c579e4cb76f383f7f551eac7471b00c36982"
         ]
         let expectedResults = [
-            "00000000002bef4107f882f6115e0b01f348d21195dacd3582aa2dabd7985806",
-            "00000000003a0d11bdd5eb634e08b7feddcfbbf228ed35d250daf19f1c88fc94", 
-            "00000000000b40f895f288e13244728a6c2d9d59d8aff29c65f8dd5114a8ca81", 
-            "00000000003007005891cd4923031e99d8e8d72f6e8e7edc6a86181897e105fe", 
-            "000000000018f0b426a4afc7130ccb47fa02af730d345b4fe7c7724d3800ec8c"
+            "065898d7ab2daa8235cdda9511d248f3010b5e11f682f80741ef2b0000000000",
+            "94fc881c9ff1da50d235ed28f2bbcfddfeb7084e63ebd5bd110d3a0000000000",
+            "81caa81451ddf8659cf2afd8599d2d6c8a724432e188f295f8400b0000000000",
+            "fe05e1971818866adc7e8e6e2fd7e8d8991e032349cd91580007300000000000",
+            "8cec00384d72c7e74f5b340d73af02fa47cb0c13c7afa426b4f0180000000000"
         ]
-
-
-        var params = ScryptParams()
-        params.n = 1024
-        params.r = 1
-        params.p = 1
-        params.desiredKeyLength = 32
-
 
         datas.enumerated().forEach { index, string in
             let data = Data(hexString: string)!
             let expected = Data(hexString: expectedResults[index])!
 
-            params.salt = data
-
-            let scrypt = Scrypt(params: params)
-            let actual = try! scrypt.calculate(data: data)
-
+            let actual = Kit.scrypt(pass: data)
             XCTAssertEqual(actual, expected)
         }
     }
-
-    func testCase1() {
-
-        var params = ScryptParams()
-        params.n = 1024
-        params.r = 8
-        params.p = 16
-        params.desiredKeyLength = 64
-
-        params.salt = "NaCl".data(using: .utf8)!
-
-        let scrypt = Scrypt(params: params)
-        let actual = try! scrypt.calculate(password: "password")
-
-        let expected = Data(hexString: "fdbabe1c9d3472007856e7190d01e9fe7c6ad7cbc8237830e77376634b3731622eaf30d92e22a3886ff109279d9830dac727afb94a83ee6d8360cbdfa2cc0640")
-        XCTAssertEqual(actual, expected)
-    }
-
-    func testCase2() {
-        var params = ScryptParams()
-        params.n = 16384
-        params.r = 8
-        params.p = 1
-        params.desiredKeyLength = 64
-        params.salt = "SodiumChloride".data(using: .utf8)!
-
-        let scrypt = Scrypt(params: params)
-        let actual = try! scrypt.calculate(password: "pleaseletmein")
-
-        let expected = Data(hexString: "7023bdcb3afd7348461c06cd81fd38ebfda8fbba904f8e3ea9b543f6545da1f2d5432955613f0fcf62d49705242a9af9e61e85dc0d651e40dfcf017b45575887")
-        XCTAssertEqual(actual, expected)
-    }
-
-    func testCase3() {
-        var params = ScryptParams()
-        params.n = 262144
-        params.r = 1
-        params.p = 8
-        params.desiredKeyLength = 32
-        params.salt = Data(hexString: "ab0c7876052600dd703518d6fc3fe8984592145b591fc8fb5c6d43190334ba19")!
-
-        let scrypt = Scrypt(params: params)
-        let actual = try! scrypt.calculate(password: "testpassword")
-
-        let expected = "fac192ceb5fd772906bea3e118a69e8bbb5cc24229e20d8766fd298291bba6bd"
-        XCTAssertEqual(actual.hexString, expected)
-    }
-
-    func testInvalidDesiredKeyLength() {
-        #if (arch(x86_64) || arch(arm64))
-        let dklen = ((1 << 32) - 1) * 32 + 1
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: 1, p: 1, desiredKeyLength: dklen)) { error in
-            if case ScryptParams.ValidationError.desiredKeyLengthTooLarge = error {} else {
-                XCTFail("Invalid error generated: \(error)")
-            }
+    
+    func testMeasure() {
+        let data = Data(hexString: "020000004c1271c211717198227392b029a64a7971931d351b387bb80db027f270411e398a07046f7d4a08dd815412a8712f874a7ebf0507e3878bd24e20a3b73fd750a667d2f451eac7471b00de6659")!
+        let expected = Data(hexString: "065898d7ab2daa8235cdda9511d248f3010b5e11f682f80741ef2b0000000000")!
+        
+        self.measure {
+            let actual = Kit.scrypt(pass: data)
+            XCTAssertEqual(actual, expected)
         }
-        #endif
-    }
-
-    func testZeroCostInvalid() {
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 0, r: 1, p: 1, desiredKeyLength: 64)) { error in
-            if case ScryptParams.ValidationError.invalidCostFactor = error {} else {
-                XCTFail("Invalid error generated: \(error)")
-            }
-        }
-    }
-
-    func testOddCostInvalid() {
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 3, r: 1, p: 1, desiredKeyLength: 64)) { error in
-            if case ScryptParams.ValidationError.invalidCostFactor = error {} else {
-                XCTFail("Invalid error generated: \(error)")
-            }
-        }
-    }
-
-    func testLargeCostInvalid() {
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: Int.max / 128, r: 8, p: 1, desiredKeyLength: 64)) { error in
-            if case ScryptParams.ValidationError.invalidCostFactor = error {} else {
-                XCTFail("Invalid error generated: \(error)")
-            }
-        }
-    }
-
-    func testLargeBlockSizeInvalid() {
-        #if (arch(x86_64) || arch(arm64))
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: Int.max / 128 + 1, p: 1, desiredKeyLength: 64)) { error in
-            if case ScryptParams.ValidationError.blockSizeTooLarge = error {} else {
-                XCTFail("Invalid error generated: \(error)")
-            }
-        }
-        #endif
     }
 
 }

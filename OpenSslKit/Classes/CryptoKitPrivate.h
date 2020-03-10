@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSData *)ripemd160:(NSData *)data;
 + (NSData *)hmacsha512:(NSData *)data key:(NSData *)key;
 + (NSData *)hmacsha256:(NSData *)data key:(NSData *)key iv:(NSData *)iv macData:(NSData *)macData;
-+ (NSData *)hmacpbfdf2:(NSData *)pass salt:(NSData *)salt length:(NSUInteger)length iterations:(NSInteger)iterations;
++ (UInt8 *)scrypt: (UInt8 *)pass passLength:(UInt32)passLength salt:(UInt8 *)salt saltLength:(UInt32) saltLength n:(UInt64)n r:(UInt32)r p:(UInt32)p outLength:(UInt32) outLength;
 
 @end
 

@@ -5,6 +5,7 @@
 #import <openssl/ec.h>
 #import <openssl/ecdh.h>
 #import <openssl/aes.h>
+#import <scrypt/scrypt.h>
 
 
 
@@ -68,10 +69,11 @@
     return result;
 }
 
-+ (NSData *)hmacpbfdf2:(NSData *)pass salt:(NSData *)salt length:(NSUInteger)length iterations:(NSInteger)iterations {
++ (UInt8 *)scrypt: (UInt8 *)pass passLength:(UInt32)passLength salt:(UInt8 *)salt saltLength:(UInt32) saltLength n:(UInt64)n r:(UInt32)r p:(UInt32)p outLength:(UInt32) outLength {
 
-    NSMutableData *result = [NSMutableData dataWithLength:length];
-    PKCS5_PBKDF2_HMAC(pass.bytes, (int)pass.length, salt.bytes, (int)salt.length, (int)iterations, EVP_sha256(), (int)length, result.mutableBytes);
+    UInt8 *result = (UInt8 *)calloc(outLength, sizeof(UInt8));
+    scrypt(pass, passLength, salt, saltLength, n, r, p, result, outLength);
+
     return result;
 }
 

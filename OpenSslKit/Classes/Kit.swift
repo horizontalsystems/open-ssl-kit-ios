@@ -36,8 +36,17 @@ public struct Kit {
         _Hash.hmacsha512(data, key: key)
     }
 
-    public static func hmacpbfdf2(pass: Data, salt: Data, length: Int, iterations: Int) -> Data {
-        _Hash.hmacpbfdf2(pass, salt: salt, length: UInt(length), iterations: iterations)
+    public static func scrypt(pass: Data) -> Data {
+        precondition(!pass.isEmpty)
+
+        var mutablePass = pass
+        let pointer = mutablePass.withUnsafeMutableBytes { $0.baseAddress! }.assumingMemoryBound(to: UInt8.self)
+
+        let length = UInt32(pass.count)
+
+        var res = UnsafeMutablePointer<UInt8>.allocate(capacity: 32)
+        res = _Hash.scrypt(pointer, passLength: length, salt: pointer, saltLength: length, n: 1024, r: 1, p: 1, outLength: 32)
+        return Data(bytes: res, count: 32)
     }
 
     public static func deriveKey(password: Data, salt: Data, iterations: Int, keyLength: Int) -> Data {
