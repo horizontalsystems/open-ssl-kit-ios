@@ -39,14 +39,7 @@ public struct Kit {
     public static func scrypt(pass: Data) -> Data {
         precondition(!pass.isEmpty)
 
-        var mutablePass = pass
-        let pointer = mutablePass.withUnsafeMutableBytes { $0.baseAddress! }.assumingMemoryBound(to: UInt8.self)
-
-        let length = UInt32(pass.count)
-
-        var res = UnsafeMutablePointer<UInt8>.allocate(capacity: 32)
-        res = _Hash.scrypt(pointer, passLength: length, salt: pointer, saltLength: length, n: 1024, r: 1, p: 1, outLength: 32)
-        return Data(bytes: res, count: 32)
+        return _Hash.scrypt(pass)
     }
 
     public static func deriveKey(password: Data, salt: Data, iterations: Int, keyLength: Int) -> Data {
@@ -62,7 +55,6 @@ public struct Kit {
         
         return nil
     }
-    
 
 }
 

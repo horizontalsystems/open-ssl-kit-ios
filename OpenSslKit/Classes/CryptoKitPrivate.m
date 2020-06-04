@@ -5,14 +5,16 @@
 #import <openssl/ec.h>
 #import <openssl/ecdh.h>
 #import <openssl/aes.h>
-#import <scrypt/scrypt.h>
-
+#import <openssl/modes.h>
+#import <openssl/bn.h>
+#import <openssl/kdf.h>
 
 
 @implementation _Hash
 
 + (NSData *)sha256:(NSData *)data {
     NSMutableData *result = [NSMutableData dataWithLength:SHA256_DIGEST_LENGTH];
+
     SHA256(data.bytes, data.length, result.mutableBytes);
     return result;
 }
@@ -40,6 +42,40 @@
     return result;
 }
 
++ (NSData *)scrypt:(NSData *)data {
+    size_t resultLen = 32;
+    NSMutableData *result = [NSMutableData dataWithLength: (NSUInteger) resultLen];
+
+    EVP_PKEY_CTX *pctx;
+    pctx = EVP_PKEY_CTX_new_id(973, NULL);
+
+    if (EVP_PKEY_derive_init(pctx) <= 0) {
+        [NSException raise:@"SCRYPT_ERROR" format:@"EVP_PKEY_derive_init"];
+    }
+    if (EVP_PKEY_CTX_set1_pbe_pass(pctx, data.bytes, (int) data.length) <= 0) {
+        [NSException raise:@"SCRYPT_ERROR" format:@"EVP_PKEY_CTX_set1_pbe_pass"];
+    }
+    if (EVP_PKEY_CTX_set1_scrypt_salt(pctx, data.bytes, (int) data.length) <= 0) {
+        [NSException raise:@"SCRYPT_ERROR" format:@"EVP_PKEY_CTX_set1_scrypt_salt"];
+    }
+    if (EVP_PKEY_CTX_set_scrypt_N(pctx, 1024) <= 0) {
+        [NSException raise:@"SCRYPT_ERROR" format:@"EVP_PKEY_CTX_set_scrypt_N"];
+    }
+    if (EVP_PKEY_CTX_set_scrypt_r(pctx, 1) <= 0) {
+        [NSException raise:@"SCRYPT_ERROR" format:@"EVP_PKEY_CTX_set_scrypt_r"];
+    }
+    if (EVP_PKEY_CTX_set_scrypt_p(pctx, 1) <= 0) {
+        [NSException raise:@"SCRYPT_ERROR" format:@"EVP_PKEY_CTX_set_scrypt_p"];
+    }
+    if (EVP_PKEY_derive(pctx, result.bytes, &resultLen) <= 0) {
+        [NSException raise:@"SCRYPT_ERROR" format:@"EVP_PKEY_derive"];
+    }
+
+    EVP_PKEY_CTX_free(pctx);
+
+    return result;
+}
+
 + (NSData *)sha256ripemd160:(NSData *)data {
     return [self ripemd160:[self sha256:data]];
 }
@@ -52,27 +88,35 @@
 }
 
 + (NSData *)hmacsha256:(NSData *)data key:(NSData *)key iv:(NSData *)iv macData:(NSData *)macData {
-    HMAC_CTX ctx;
-    HMAC_CTX_init(&ctx);
-    HMAC_Init(&ctx, key.bytes, (int) key.length, EVP_sha256());
+//    HMAC_CTX ctx;
+//    HMAC_CTX_init(&ctx);
+//    HMAC_Init(&ctx, key.bytes, (int) key.length, EVP_sha256());
+//
+//    HMAC_Update(&ctx, iv.bytes, (int) iv.length);
+//    HMAC_Update(&ctx, data.bytes, (int) data.length);
+//    HMAC_Update(&ctx, macData.bytes, (int) macData.length);
+//
+//    unsigned int length = SHA256_DIGEST_LENGTH;
+//    NSMutableData *result = [NSMutableData dataWithLength:length];
+//    HMAC_Final(&ctx, result.mutableBytes, &length);
+//
+//    HMAC_CTX_cleanup(&ctx);
+//
+////    HMAC_CTX_free(ctx);
 
-    HMAC_Update(&ctx, iv.bytes, (int) iv.length);
-    HMAC_Update(&ctx, data.bytes, (int) data.length);
-    HMAC_Update(&ctx, macData.bytes, (int) macData.length);
+    HMAC_CTX *ctx = HMAC_CTX_new();
+    HMAC_CTX_reset(ctx);
+    HMAC_Init_ex(ctx, key.bytes, (int) key.length, EVP_sha256(), nil);
+
+    HMAC_Update(ctx, iv.bytes, (int) iv.length);
+    HMAC_Update(ctx, data.bytes, (int) data.length);
+    HMAC_Update(ctx, macData.bytes, (int) macData.length);
 
     unsigned int length = SHA256_DIGEST_LENGTH;
     NSMutableData *result = [NSMutableData dataWithLength:length];
-    HMAC_Final(&ctx, result.mutableBytes, &length);
+    HMAC_Final(ctx, result.mutableBytes, &length);
 
-    HMAC_CTX_cleanup(&ctx);
-
-    return result;
-}
-
-+ (UInt8 *)scrypt: (UInt8 *)pass passLength:(UInt32)passLength salt:(UInt8 *)salt saltLength:(UInt32) saltLength n:(UInt64)n r:(UInt32)r p:(UInt32)p outLength:(UInt32) outLength {
-
-    UInt8 *result = (UInt8 *)calloc(outLength, sizeof(UInt8));
-    scrypt(pass, passLength, salt, saltLength, n, r, p, result, outLength);
+    HMAC_CTX_free(ctx);
 
     return result;
 }
@@ -124,7 +168,7 @@
     unsigned char ecountBuf[16] = {0};
     unsigned int num = 0;
 
-    AES_ctr128_encrypt(data.bytes, result.mutableBytes, (size_t) data.length, &aesKey, (unsigned char*) iv.bytes, ecountBuf, &num);
+    CRYPTO_ctr128_encrypt(data.bytes, result.mutableBytes, (size_t) data.length, &aesKey, (unsigned char*) iv.bytes, ecountBuf, &num, (block128_f)AES_encrypt);
 
     return result;
 }
