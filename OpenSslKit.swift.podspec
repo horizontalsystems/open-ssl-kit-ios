@@ -20,7 +20,7 @@ OpenSslKit includes crypto functions that can be used in pure Swift. It supports
   s.source_files = 'OpenSslKit/Classes/**/*'
 
   s.preserve_paths = ['OpenSslKit/Libraries']
-  s.vendored_libraries  = ['OpenSslKit/Libraries/lib/libcrypto.a', 'OpenSslKit/Libraries/lib/libScrypt.a']
+  s.vendored_libraries  = ['OpenSslKit/Libraries/lib/libcrypto.a', 'OpenSslKit/Libraries/lib/libssl.a']
 
   s.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}/OpenSslKit/Libraries/include"',
