@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
   s.name             = 'OpenSslKit.swift'
   s.module_name      = 'OpenSslKit'
-  s.version          = '1.2'
+  s.version          = '1.2.1'
   s.summary          = 'OpenSsl crypto library with base58 conversion for Swift and Scrypt hash for litecoin'
 
   s.description      = <<-DESC
-OpenSslKit includes crypto functions that can be used in pure Swift. It supports openssl, base58, sha3 keccak256, trezor realization Scrypt.
+OpenSslKit includes crypto functions that can be used in pure Swift. It supports openssl, base58, sha3 keccak256, scrypt.
                        DESC
 
   s.homepage         = 'https://github.com/horizontalsystems/open-ssl-kit-ios'
