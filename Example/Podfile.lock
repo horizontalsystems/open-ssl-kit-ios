@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  OpenSslKit.swift: cbc89eeda3d343853d6399f6cbb7c8e40f996a56
+  OpenSslKit.swift: 47091d72b9eee72e272eb73dde98432430c6d8e2
 
 PODFILE CHECKSUM: 2a96915a9379ccbde3092f7557dba2482c926f60
 
