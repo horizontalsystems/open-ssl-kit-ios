@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'OpenSslKit.swift'
   s.module_name      = 'OpenSslKit'
-  s.version          = '1.2.1'
+  s.version          = '1.2.2'
   s.summary          = 'OpenSsl crypto library with base58 conversion for Swift and Scrypt hash for litecoin'
 
   s.description      = <<-DESC
